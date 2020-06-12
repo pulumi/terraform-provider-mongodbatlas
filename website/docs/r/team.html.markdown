@@ -36,7 +36,7 @@ resource "mongodbatlas_teams" "test" {
 
 In addition to all arguments above, the following attributes are exported:
 
-* `id` -	The Terraform's unique identifier used internally for state management.
+* `id` -	The providers's unique identifier used internally for state management.
 * `team_id` - The unique identifier for the team.
 
 ## Import

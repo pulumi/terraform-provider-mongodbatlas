@@ -135,7 +135,7 @@ resource "mongodbatlas_global_cluster_config" "config" {
 
 In addition to all arguments above, the following attributes are exported:
 
-* `id` - The Terraform's unique identifier used internally for state management.
+* `id` - The providers's unique identifier used internally for state management.
 * `custom_zone_mapping` - A map of all custom zone mappings defined for the Global Cluster. Atlas automatically maps each location code to the closest geographical zone. Custom zone mappings allow administrators to override these automatic mappings. If your Global Cluster does not have any custom zone mappings, this document is empty.
 
 ## Import

@@ -50,7 +50,7 @@ data "mongodbatlas_custom_db_role" "test" {
 
 In addition to all arguments above, the following attributes are exported:
 
-* `id` - Unique identifier used for terraform for internal manages and can be used to import.
+* `id` - Unique identifier used for this provider for internal manages and can be used to import.
 
 ### Actions
 Each object in the actions array represents an individual privilege action granted by the role. It is an required field.

@@ -57,7 +57,7 @@ Accepted values are:
 
 In addition to all arguments above, the following attributes are exported:
 
-* `id` - The Terraform's unique identifier used internally for state management.
+* `id` - The providers's unique identifier used internally for state management.
 * `private_link_id` - Unique identifier of the AWS PrivateLink connection.
 * `endpoint_service_name` - Name of the PrivateLink endpoint service in AWS. Returns null while the endpoint service is being created.
 * `error_message` - Error message pertaining to the AWS PrivateLink connection. Returns null if there are no errors.

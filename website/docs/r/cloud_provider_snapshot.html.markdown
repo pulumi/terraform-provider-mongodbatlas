@@ -59,7 +59,7 @@ On-demand snapshots happen immediately, unlike scheduled snapshots which occur a
 In addition to all arguments above, the following attributes are exported:
 
 * `snapshot_id` - Unique identifier of the snapshot.
-* `id` -	Unique identifier used for terraform for internal manages.
+* `id` -	Unique identifier used by the provider for internal manages.
 * `created_at` - UTC ISO 8601 formatted point in time when Atlas took the snapshot.
 * `description` - Description of the snapshot. Only present for on-demand snapshots.
 * `expires_at` - UTC ISO 8601 formatted point in time when Atlas will delete the snapshot.

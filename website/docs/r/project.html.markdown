@@ -10,7 +10,7 @@ description: |-
 
 `mongodbatlas_project` provides a Project resource. This allows project to be created.
 
-~> **IMPORTANT WARNING:**  Changing the name of an existing Project in your Terraform configuration will result the destruction of that Project and related resources (including Clusters) and the re-creation of those resources.  Terraform will inform you of the destroyed/created resources before applying so be sure to verify any change to your environment before applying.
+~> **IMPORTANT WARNING:**  Changing the name of an existing Project in your configuration will result the destruction of that Project and related resources (including Clusters) and the re-creation of those resources.  The provider will inform you of the destroyed/created resources before applying so be sure to verify any change to your environment before applying.
 
 ## Example Usage
 

@@ -210,7 +210,7 @@ resource "mongodbatlas_cluster" "cluster-test" {
     - Set to `false` to disable cluster tier auto-scaling.
   
 ~> **IMPORTANT:** If `auto_scaling_compute_enabled` is true,  then Atlas will automatically scale up to the maximum provided and down to the minimum, if provided.
-This will cause the value of `provider_instance_size_name` returned to potential be different than what is specified in the Terraform config and if one then applies a plan, not noting this, Terraform will scale the cluster back down to the original instanceSizeName value.
+This will cause the value of `provider_instance_size_name` returned to potential be different than what is specified in the config and if one then applies a plan, not noting this, this provider will scale the cluster back down to the original instanceSizeName value.
 To prevent this a lifecycle customization should be used, i.e.:  
 `lifecycle {
   ignore_changes = [provider_instance_size_name]
@@ -252,7 +252,7 @@ To prevent this a lifecycle customization should be used, i.e.:
 
     You cannot enable cloud backup if you have an existing cluster in the project with legacy backup enabled.
 
-    ~> **IMPORTANT:** If setting to true for an existing cluster or imported cluster be sure to run terraform refresh after applying to enable modification of the Cloud Backup Snapshot Policy going forward.
+    ~> **IMPORTANT:** If setting to true for an existing cluster or imported cluster be sure to run `pulumi refresh` after applying to enable modification of the Cloud Backup Snapshot Policy going forward.
 
 * `backing_provider_name` - (Optional) Cloud service provider on which the server for a multi-tenant cluster is provisioned.
 
@@ -393,7 +393,7 @@ In addition to all arguments above, the following attributes are exported:
 
 * `cluster_id` - The cluster ID.
 *  `mongo_db_version` - Version of MongoDB the cluster runs, in `major-version`.`minor-version` format.
-* `id` -	The Terraform's unique identifier used internally for state management.
+* `id` -	The providers's unique identifier used internally for state management.
 * `mongo_uri` - Base connection string for the cluster. Atlas only displays this field after the cluster is operational, not while it builds the cluster.
 * `mongo_uri_updated` - Lists when the connection string was last updated. The connection string changes, for example, if you change a replica set to a sharded cluster.
 * `mongo_uri_with_options` - connection string for connecting to the Atlas cluster. Includes the replicaSet, ssl, and authSource query parameters in the connection string with values appropriate for the cluster.
@@ -401,7 +401,7 @@ In addition to all arguments above, the following attributes are exported:
 
    **NOTE** Connection strings must be returned as a list, therefore to refer to a specific attribute value add index notation. Example: mongodbatlas_cluster.cluster-test.connection_strings.0.standard_srv
 
-   Private connection strings may not be available immediately as the reciprocal connections may not have finalized by end of the Terraform run. If the expected connection string(s) do not contain a value a terraform refresh may need to be performed to obtain the value. One can also view the status of the peered connection in the [Atlas UI](https://docs.atlas.mongodb.com/security-vpc-peering/). 
+   Private connection strings may not be available immediately as the reciprocal connections may not have finalized by end of the provider run. If the expected connection string(s) do not contain a value a `pulumi refresh` may need to be performed to obtain the value. One can also view the status of the peered connection in the [Atlas UI](https://docs.atlas.mongodb.com/security-vpc-peering/). 
 
     - `connection_strings.standard` -   Public mongodb:// connection string for this cluster.
     - `connection_strings.standard_srv` - Public mongodb+srv:// connection string for this cluster. The mongodb+srv protocol tells the driver to look up the seed list of hosts in DNS. Atlas synchronizes this list with the nodes in a cluster. If the connection string uses this URI format, you don’t need to append the seed list or change the URI if the nodes change. Use this URI format if your driver supports it. If it doesn’t  , use connectionStrings.standard.

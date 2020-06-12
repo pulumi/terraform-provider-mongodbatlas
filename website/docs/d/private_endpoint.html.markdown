@@ -37,7 +37,7 @@ data "mongodbatlas_private_endpoint" "test" {
 
 In addition to all arguments above, the following attributes are exported:
 
-* `id` - The Terraform's unique identifier used internally for state management.
+* `id` - The providers's unique identifier used internally for state management.
 * `endpoint_service_name` - Name of the PrivateLink endpoint service in AWS. Returns null while the endpoint service is being created.
 * `error_message` - Error message pertaining to the AWS PrivateLink connection. Returns null if there are no errors.
 * `interface_endpoints` - Unique identifiers of the interface endpoints in your VPC that you added to the AWS PrivateLink connection.

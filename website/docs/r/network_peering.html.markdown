@@ -12,7 +12,7 @@ description: |-
 
 Ensure you have first created a network container if it is required for your configuration.  See the network_container resource documentation to determine if you need a network container first.  Examples for creating both container and peering resource are shown below as well as examples for creating the peering connection only.
 
-~> **GCP AND AZURE ONLY:** Connect via Peering Only mode is deprecated, so no longer needed.  See [disable Peering Only mode](https://docs.atlas.mongodb.com/reference/faq/connection-changes/#disable-peering-mode) for details and [private_ip_mode](https://www.terraform.io/docs/providers/mongodbatlas/r/private_ip_mode.html) to disable.
+~> **GCP AND AZURE ONLY:** Connect via Peering Only mode is deprecated, so no longer needed.  See [disable Peering Only mode](https://docs.atlas.mongodb.com/reference/faq/connection-changes/#disable-peering-mode) for details and `private_ip_mode` resource to disable.
 
 ~> **AZURE ONLY:** To create the peering request with an Azure VNET, you must grant Atlas the following permissions on the virtual network.
     Microsoft.Network/virtualNetworks/virtualNetworkPeerings/read
@@ -104,7 +104,7 @@ data "google_compute_network" "default" {
 
 # Create the GCP peer
 resource "google_compute_network_peering" "peering" {
-  name         = "peering-gcp-terraform-test"
+  name         = "peering-gcp-tf-test"
   network      = "${data.google_compute_network.default.self_link}"
   peer_network = "https://www.googleapis.com/compute/v1/projects/${mongodbatlas_network_peering.test.atlas_gcp_project_id}/global/networks/${mongodbatlas_network_peering.test.atlas_vpc_name}"
 }
@@ -112,7 +112,7 @@ resource "google_compute_network_peering" "peering" {
 # Create the cluster once the peering connection is completed
 resource "mongodbatlas_cluster" "test" {
   project_id   = "${local.project_id}"
-  name         = "terraform-manually-test"
+  name         = "tf-manually-test"
   num_shards   = 1
   disk_size_gb = 5
 
@@ -134,7 +134,7 @@ resource "mongodbatlas_cluster" "test" {
 #  happens when the google_compute_network_peering and and
 #  mongodbatlas_network_peering make a reciprocal connection).  Hence
 #  since the cluster can be created before this connection completes
-#  you may need to run `terraform refresh` to obtain the private connection strings.
+#  you may need to run `pulumi refresh` to obtain the private connection strings.
 
 ```
 
@@ -168,7 +168,7 @@ resource "mongodbatlas_network_peering" "test" {
 # Create the cluster once the peering connection is completed
 resource "mongodbatlas_cluster" "test" {
   project_id = "${local.project_id}"
-  name       = "terraform-manually-test"
+  name       = "tf-manually-test"
   num_shards = 1
 
   replication_factor           = 3
@@ -186,16 +186,13 @@ resource "mongodbatlas_cluster" "test" {
 
 ```
 
-## Example Usage - Peering Connection Only, Container Exists
-You can create a peering connection if an appropriate container for your cloud provider already exists in your project (see the network_container resource for more information).  A container may already exist if you have already created a cluster in your project, if so you may obtain the `container_id` from the cluster resource as shown in the examples below.
-
-### Example with AWS
+### Example with AWS - Peering Connection Only, Container Exists
 ```hcl
 # Create an Atlas cluster, this creates a container if one
 # does not yet exist for this AWS region
 resource "mongodbatlas_cluster" "test" {
   project_id   = local.project_id
-  name         = "terraform-test"
+  name         = "tf-test"
   disk_size_gb = 5
 
   replication_factor           = 3
@@ -237,13 +234,13 @@ resource "aws_vpc_peering_connection_accepter" "aws_peer" {
 }
 ```
 
-### Example with GCP
+### Example with GCP - Peering Connection Only, Container Exists
 ```hcl
 # Create an Atlas cluster, this creates a container if one
 # does not yet exist for this GCP 
 resource "mongodbatlas_cluster" "test" {
   project_id   = local.project_id
-  name         = "terraform-manually-test"
+  name         = "tf-manually-test"
   num_shards   = 1
   disk_size_gb = 5
 
@@ -275,13 +272,13 @@ data "google_compute_network" "default" {
 
 # Create the GCP peer
 resource "google_compute_network_peering" "peering" {
-  name         = "peering-gcp-terraform-test"
+  name         = "peering-gcp-tf-test"
   network      = data.google_compute_network.default.self_link
   peer_network = "https://www.googleapis.com/compute/v1/projects/${mongodbatlas_network_peering.test.atlas_gcp_project_id}/global/networks/${mongodbatlas_network_peering.test.atlas_vpc_name}"
 }
 ```
 
-### Example with Azure
+### Example with Azure - Peering Connection Only, Container Exists
 
 ```hcl
 
@@ -346,7 +343,7 @@ resource "mongodbatlas_network_peering" "test" {
 In addition to all arguments above, the following attributes are exported:
 
 * `peer_id` - Unique identifier of the Atlas network peer.
-* `id` - Terraform's unique identifier used internally for state management.
+* `id` - The providers's unique identifier used internally for state management.
 * `connection_id` -  Unique identifier of the Atlas network peering container.
 * `provider_name` - Cloud provider to whom the peering connection is being made. (Possible Values `AWS`, `AZURE`, `GCP`).
 

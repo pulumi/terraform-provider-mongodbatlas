@@ -77,7 +77,7 @@ resource "mongodbatlas_network_container" "test" {
 In addition to all arguments above, the following attributes are exported:
 
 * `container_id` - The Network Peering Container ID.
-* `id` - Terraform's unique identifier used internally for state management.
+* `id` - The providers's unique identifier used internally for state management.
 * `provisioned` - Indicates whether the project has Network Peering connections deployed in the container.
 **AWS ONLY:** 
 * `region_name` - Atlas name for AWS region where the Atlas container resides.

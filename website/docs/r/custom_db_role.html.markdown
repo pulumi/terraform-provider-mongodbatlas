@@ -152,7 +152,7 @@ Each object in the inheritedRoles array represents a key-value pair indicating t
 ## Attributes Reference
 In addition to all arguments above, the following attributes are exported:
 
-* `id` - Unique identifier used for terraform for internal manages and can be used to import.
+* `id` - Unique identifier used by the provider for internal manages and can be used to import.
 
 ## Import
 

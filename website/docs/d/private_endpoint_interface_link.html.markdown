@@ -52,7 +52,7 @@ data "mongodbatlas_private_endpoint_link" "test" {
 
 In addition to all arguments above, the following attributes are exported:
 
-* `id` - The Terraform's unique identifier used internally for state management.
+* `id` - The providers's unique identifier used internally for state management.
 * `delete_requested` - Indicates if Atlas received a request to remove the interface endpoint from the private endpoint connection.
 * `error_message` - Error message pertaining to the interface endpoint. Returns null if there are no errors.
 * `connection_status` - Status of the interface endpoint.

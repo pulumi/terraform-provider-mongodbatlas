@@ -146,7 +146,7 @@ Contains key-value pairs that tag and categorize the cluster. Each key and value
 
 
 ### Plugin
-Contains a key-value pair that tags that the cluster was created by a Terraform Provider and notes the version.
+Contains a key-value pair that tags that the cluster was created by this provider and notes the version.
 
 * `name` - The name of the current plugin
 * `version` - The current version of the plugin.
