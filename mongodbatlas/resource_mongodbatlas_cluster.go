@@ -535,7 +535,7 @@ func resourceMongoDBAtlasClusterCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	if containsLabelOrKey(expandLabelSliceFromSetSchema(d), defaultLabel) {
-		return fmt.Errorf("you should not set `Infrastructure Tool` label, it is used for internal purposes.")
+		return fmt.Errorf("you should not set `Infrastructure Tool` label, it is used for internal purposes")
 	}
 
 	clusterRequest.Labels = append(expandLabelSliceFromSetSchema(d), defaultLabel)
@@ -711,14 +711,16 @@ func resourceMongoDBAtlasClusterRead(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf(errorClusterSetting, "labels", clusterName, err)
 	}
 
-	containers, _, err := conn.Containers.List(context.Background(), projectID,
-		&matlas.ContainersListOptions{ProviderName: providerName})
-	if err != nil {
-		return fmt.Errorf(errorClusterRead, clusterName, err)
-	}
+	if providerName != "TENANT" {
+		containers, _, err := conn.Containers.List(context.Background(), projectID,
+			&matlas.ContainersListOptions{ProviderName: providerName})
+		if err != nil {
+			return fmt.Errorf(errorClusterRead, clusterName, err)
+		}
 
-	if err := d.Set("container_id", getContainerID(containers, cluster)); err != nil {
-		return fmt.Errorf(errorClusterSetting, "container_id", clusterName, err)
+		if err := d.Set("container_id", getContainerID(containers, cluster)); err != nil {
+			return fmt.Errorf(errorClusterSetting, "container_id", clusterName, err)
+		}
 	}
 
 	/*
@@ -852,7 +854,7 @@ func resourceMongoDBAtlasClusterUpdate(d *schema.ResourceData, meta interface{})
 	}
 	if d.HasChange("labels") {
 		if containsLabelOrKey(expandLabelSliceFromSetSchema(d), defaultLabel) {
-			return fmt.Errorf("you should not set `Infrastructure Tool` label, it is used for internal purposes.")
+			return fmt.Errorf("you should not set `Infrastructure Tool` label, it is used for internal purposes")
 		}
 
 		cluster.Labels = append(expandLabelSliceFromSetSchema(d), defaultLabel)
@@ -1011,7 +1013,7 @@ func expandProviderSetting(d *schema.ResourceData) matlas.ProviderSettings {
 		}
 
 		providerSettings.EncryptEBSVolume = pointy.Bool(true)
-		if encryptEBSVolume, ok := d.GetOk("provider_encrypt_ebs_volume"); ok {
+		if encryptEBSVolume, ok := d.GetOkExists("provider_encrypt_ebs_volume"); ok {
 			providerSettings.EncryptEBSVolume = pointy.Bool(cast.ToBool(encryptEBSVolume))
 		}
 	}
@@ -1044,8 +1046,10 @@ func flattenProviderSettings(d *schema.ResourceData, settings *matlas.ProviderSe
 		log.Printf(errorClusterSetting, "provider_disk_type_name", clusterName, err)
 	}
 
-	if err := d.Set("provider_encrypt_ebs_volume", settings.EncryptEBSVolume); err != nil {
-		log.Printf(errorClusterSetting, "provider_encrypt_ebs_volume", clusterName, err)
+	if settings.EncryptEBSVolume != nil {
+		if err := d.Set("provider_encrypt_ebs_volume", *settings.EncryptEBSVolume); err != nil {
+			log.Printf(errorClusterSetting, "provider_encrypt_ebs_volume", clusterName, err)
+		}
 	}
 
 	if err := d.Set("provider_instance_size_name", settings.InstanceSizeName); err != nil {
@@ -1142,25 +1146,26 @@ func flattenRegionsConfig(regionsConfig map[string]matlas.RegionsConfig) []map[s
 
 func expandProcessArgs(d *schema.ResourceData, p map[string]interface{}) *matlas.ProcessArgs {
 	res := &matlas.ProcessArgs{}
-	if _, ok := d.GetOk("advanced_configuration.0.fail_index_key_too_long"); ok {
+
+	if _, ok := d.GetOkExists("advanced_configuration.0.fail_index_key_too_long"); ok {
 		res.FailIndexKeyTooLong = pointy.Bool(cast.ToBool(p["fail_index_key_too_long"]))
 	}
-	if _, ok := d.GetOk("advanced_configuration.0.javascript_enabled"); ok {
+	if _, ok := d.GetOkExists("advanced_configuration.0.javascript_enabled"); ok {
 		res.JavascriptEnabled = pointy.Bool(cast.ToBool(p["javascript_enabled"]))
 	}
-	if _, ok := d.GetOk("advanced_configuration.0.minimum_enabled_tls_protocol"); ok {
+	if _, ok := d.GetOkExists("advanced_configuration.0.minimum_enabled_tls_protocol"); ok {
 		res.MinimumEnabledTLSProtocol = cast.ToString(p["minimum_enabled_tls_protocol"])
 	}
-	if _, ok := d.GetOk("advanced_configuration.0.no_table_scan"); ok {
+	if _, ok := d.GetOkExists("advanced_configuration.0.no_table_scan"); ok {
 		res.NoTableScan = pointy.Bool(cast.ToBool(p["no_table_scan"]))
 	}
-	if _, ok := d.GetOk("advanced_configuration.0.sample_size_bi_connector"); ok {
+	if _, ok := d.GetOkExists("advanced_configuration.0.sample_size_bi_connector"); ok {
 		res.SampleSizeBIConnector = pointy.Int64(cast.ToInt64(p["sample_size_bi_connector"]))
 	}
-	if _, ok := d.GetOk("advanced_configuration.0.sample_refresh_interval_bi_connector"); ok {
+	if _, ok := d.GetOkExists("advanced_configuration.0.sample_refresh_interval_bi_connector"); ok {
 		res.SampleRefreshIntervalBIConnector = pointy.Int64(cast.ToInt64(p["sample_refresh_interval_bi_connector"]))
 	}
-	if _, ok := d.GetOk("advanced_configuration.0.oplog_size_mb"); ok {
+	if _, ok := d.GetOkExists("advanced_configuration.0.oplog_size_mb"); ok {
 		if sizeMB := cast.ToInt64(p["oplog_size_mb"]); sizeMB != 0 {
 			res.OplogSizeMB = pointy.Int64(cast.ToInt64(p["oplog_size_mb"]))
 		} else {
@@ -1173,10 +1178,10 @@ func expandProcessArgs(d *schema.ResourceData, p map[string]interface{}) *matlas
 func flattenProcessArgs(p *matlas.ProcessArgs) []interface{} {
 	return []interface{}{
 		map[string]interface{}{
-			"fail_index_key_too_long":              *p.FailIndexKeyTooLong,
-			"javascript_enabled":                   *p.JavascriptEnabled,
+			"fail_index_key_too_long":              cast.ToBool(p.FailIndexKeyTooLong),
+			"javascript_enabled":                   cast.ToBool(p.JavascriptEnabled),
 			"minimum_enabled_tls_protocol":         p.MinimumEnabledTLSProtocol,
-			"no_table_scan":                        *p.NoTableScan,
+			"no_table_scan":                        cast.ToBool(p.NoTableScan),
 			"oplog_size_mb":                        p.OplogSizeMB,
 			"sample_size_bi_connector":             p.SampleSizeBIConnector,
 			"sample_refresh_interval_bi_connector": p.SampleRefreshIntervalBIConnector,
