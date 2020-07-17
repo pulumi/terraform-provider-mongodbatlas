@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 
-	matlas "github.com/mongodb/go-client-mongodb-atlas/mongodbatlas"
+	matlas "go.mongodb.org/atlas/mongodbatlas"
 )
 
 func dataSourceMongoDBAtlasCloudProviderSnapshotRestoreJobs() *schema.Resource {
@@ -125,14 +125,17 @@ func dataSourceMongoDBAtlasCloudProviderSnapshotRestoreJobsRead(d *schema.Resour
 	if err != nil {
 		return fmt.Errorf("error getting cloudProviderSnapshotRestoreJobs information: %s", err)
 	}
+
 	if err := d.Set("results", flattenCloudProviderSnapshotRestoreJobs(cloudProviderSnapshotRestoreJobs.Results)); err != nil {
 		return fmt.Errorf("error setting `results`: %s", err)
 	}
+
 	if err := d.Set("total_count", cloudProviderSnapshotRestoreJobs.TotalCount); err != nil {
 		return fmt.Errorf("error setting `total_count`: %s", err)
 	}
 
 	d.SetId(resource.UniqueId())
+
 	return nil
 }
 
@@ -162,5 +165,6 @@ func flattenCloudProviderSnapshotRestoreJobs(cloudProviderSnapshotRestoreJobs []
 			}
 		}
 	}
+
 	return results
 }

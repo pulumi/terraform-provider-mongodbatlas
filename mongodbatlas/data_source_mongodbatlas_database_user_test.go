@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	matlas "github.com/mongodb/go-client-mongodb-atlas/mongodbatlas"
+	matlas "go.mongodb.org/atlas/mongodbatlas"
 )
 
 func TestAccDataSourceMongoDBAtlasDatabaseUser_basic(t *testing.T) {
@@ -38,7 +38,6 @@ func TestAccDataSourceMongoDBAtlasDatabaseUser_basic(t *testing.T) {
 			},
 		},
 	})
-
 }
 
 func testAccMongoDBAtlasDatabaseUserDataSourceConfig(projectID, roleName, username string) string {

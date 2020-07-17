@@ -6,11 +6,10 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	matlas "github.com/mongodb/go-client-mongodb-atlas/mongodbatlas"
+	matlas "go.mongodb.org/atlas/mongodbatlas"
 )
 
 func TestAccDataSourceMongoDBAtlasNetworkPeerings_basic(t *testing.T) {
-
 	var peer matlas.Peer
 
 	resourceName := "mongodbatlas_network_peering.test"
@@ -43,7 +42,6 @@ func TestAccDataSourceMongoDBAtlasNetworkPeerings_basic(t *testing.T) {
 			},
 		},
 	})
-
 }
 
 func testAccDSMongoDBAtlasNetworkPeeringsConfig(projectID, vpcID, awsAccountID, vpcCIDRBlock, awsRegion string) string {

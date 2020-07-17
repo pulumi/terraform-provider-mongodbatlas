@@ -2,11 +2,12 @@ package mongodbatlas
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 
-	matlas "github.com/mongodb/go-client-mongodb-atlas/mongodbatlas"
+	matlas "go.mongodb.org/atlas/mongodbatlas"
 )
 
 func dataSourceMongoDBAtlasTeam() *schema.Resource {
@@ -18,12 +19,16 @@ func dataSourceMongoDBAtlasTeam() *schema.Resource {
 				Required: true,
 			},
 			"team_id": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:          schema.TypeString,
+				Computed:      true,
+				Optional:      true,
+				ConflictsWith: []string{"name"},
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:          schema.TypeString,
+				Computed:      true,
+				Optional:      true,
+				ConflictsWith: []string{"team_id"},
 			},
 			"usernames": {
 				Type:     schema.TypeSet,
@@ -37,12 +42,24 @@ func dataSourceMongoDBAtlasTeam() *schema.Resource {
 }
 
 func dataSourceMongoDBAtlasTeamRead(d *schema.ResourceData, meta interface{}) error {
-	//Get client connection.
+	// Get client connection.
 	conn := meta.(*matlas.Client)
 	orgID := d.Get("org_id").(string)
-	teamID := d.Get("team_id").(string)
+	teamID, teamIDOk := d.GetOk("team_id")
+	name, nameOk := d.GetOk("name")
 
-	team, _, err := conn.Teams.Get(context.Background(), orgID, teamID)
+	if !teamIDOk && !nameOk {
+		return errors.New("either team_id or name must be configured")
+	}
+
+	var err error
+	var team *matlas.Team
+	if teamIDOk {
+		team, _, err = conn.Teams.Get(context.Background(), orgID, teamID.(string))
+	} else {
+		team, _, err = conn.Teams.GetOneTeamByName(context.Background(), orgID, name.(string))
+	}
+
 	if err != nil {
 		return fmt.Errorf(errorTeamRead, err)
 	}
@@ -51,15 +68,15 @@ func dataSourceMongoDBAtlasTeamRead(d *schema.ResourceData, meta interface{}) er
 		return fmt.Errorf(errorTeamSetting, "name", d.Id(), err)
 	}
 
-	//Set Usernames
-	users, _, err := conn.Teams.GetTeamUsersAssigned(context.Background(), orgID, teamID)
+	// Set Usernames
+	users, _, err := conn.Teams.GetTeamUsersAssigned(context.Background(), orgID, team.ID)
 	if err != nil {
 		return fmt.Errorf(errorTeamRead, err)
 	}
 
-	var usernames []string
-	for _, u := range users {
-		usernames = append(usernames, u.Username)
+	usernames := []string{}
+	for i := range users {
+		usernames = append(usernames, users[i].Username)
 	}
 
 	if err := d.Set("usernames", usernames); err != nil {

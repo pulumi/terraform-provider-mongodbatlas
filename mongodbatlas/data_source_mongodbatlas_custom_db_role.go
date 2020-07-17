@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	matlas "github.com/mongodb/go-client-mongodb-atlas/mongodbatlas"
+	matlas "go.mongodb.org/atlas/mongodbatlas"
 )
 
 func dataSourceMongoDBAtlasCustomDBRole() *schema.Resource {
@@ -85,9 +85,11 @@ func dataSourceMongoDBAtlasCustomDBRoleRead(d *schema.ResourceData, meta interfa
 	if err := d.Set("role_name", customDBRole.RoleName); err != nil {
 		return fmt.Errorf("error setting `role_name` for custom db role (%s): %s", d.Id(), err)
 	}
+
 	if err := d.Set("actions", flattenActions(customDBRole.Actions)); err != nil {
 		return fmt.Errorf("error setting `actions` for custom db role (%s): %s", d.Id(), err)
 	}
+
 	if err := d.Set("inherited_roles", flattenInheritedRoles(customDBRole.InheritedRoles)); err != nil {
 		return fmt.Errorf("error setting `inherited_roles` for custom db role (%s): %s", d.Id(), err)
 	}

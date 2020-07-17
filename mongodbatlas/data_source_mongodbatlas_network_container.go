@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	matlas "github.com/mongodb/go-client-mongodb-atlas/mongodbatlas"
+	matlas "go.mongodb.org/atlas/mongodbatlas"
 )
 
 func dataSourceMongoDBAtlasNetworkContainer() *schema.Resource {
@@ -66,7 +66,7 @@ func dataSourceMongoDBAtlasNetworkContainer() *schema.Resource {
 }
 
 func dataSourceMongoDBAtlasNetworkContainerRead(d *schema.ResourceData, meta interface{}) error {
-	//Get client connection.
+	// Get client connection.
 	conn := meta.(*matlas.Client)
 	projectID := d.Get("project_id").(string)
 	containerID := d.Get("container_id").(string)
@@ -76,6 +76,7 @@ func dataSourceMongoDBAtlasNetworkContainerRead(d *schema.ResourceData, meta int
 		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil
 		}
+
 		return fmt.Errorf(errorContainerRead, containerID, err)
 	}
 
